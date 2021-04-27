@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class FrameBO extends JFrame implements ActionListener {
 
     private JdbcRetrieve BO;
-    private String[] titles = {"Date","Region", "Product", "Qty", "Cost", "Amt", "Taxe", "total"};
+    private String[] titles = {"ID","Date","Region", "Product", "Qty", "Cost", "Amt", "Taxe", "total"};
     private JLabel label;
     private JTable table;
     private JPanel panelButt ;

@@ -28,9 +28,9 @@ public class Receiver {
                 System.out.println("[x] received '" + message );
                 try {
                     me.insertIntoDataBase(new JSONObject(message));
-                    me.getFromDataBase();
+                    //HO.UpdateTable();
 
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             };
