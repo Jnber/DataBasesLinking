@@ -9,7 +9,10 @@ import org.json.JSONObject;
 public class Receiver {
     private final static  String QUEUE_NAME = "BO1";
     public static void main (String[] args) throws Exception{
+
         JdbcPreparedTesting me = new JdbcPreparedTesting();
+        FrameHo HO = new FrameHo(me);
+
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         // channel : canal de communication , liaison logique vers le serveur pour envoyer msg
@@ -25,6 +28,8 @@ public class Receiver {
                 System.out.println("[x] received '" + message );
                 try {
                     me.insertIntoDataBase(new JSONObject(message));
+                    me.getFromDataBase();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
