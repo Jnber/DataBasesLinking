@@ -14,6 +14,9 @@ public class JdbcRetrieve {
     String user = "root";
     String password = "";
     String query = "SELECT * FROM `product sales`";
+    String insert = "INSERT INTO `product sales` (`Date`,`Region`, `Product`, `Qty`, `Cost`, `Amt`, `Taxe`,`total`) VALUES(?,?,?,?,?,?,?,?)";
+    String delete = "DELETE from `product sales` where ID= (SELECT ID FROM (SELECT * FROM `product sales` LIMIT ?,1) as t)";
+    String update = "update `product sales` set Date=? , Region=?, Product=?, Qty=?, Cost=?, Amt=?, Taxe=? , Total=?   WHERE ID=(SELECT ID FROM (SELECT * FROM `product sales` LIMIT ?,1) as t)";
     Sender me = new Sender();
     ArrayList<Object[]> arraybo= new ArrayList<Object[]>();
     ArrayList<String> ids= new ArrayList<String>();
@@ -46,15 +49,14 @@ public class JdbcRetrieve {
                 toSend.add(obj);
 
                 Object[] data1= new Object[9];
-                data1[0]=rs.getString(1);
-                data1[1]=rs.getString(2);
-                data1[2]=rs.getString(3);
-                data1[3]=rs.getString(4);
-                data1[4]=rs.getString(5);
-                data1[5]=rs.getString(6);
-                data1[6]=rs.getString(7);
-                data1[7]=rs.getString(8);
-                data1[8]=rs.getString(9);
+                data1[0]=rs.getString(2);
+                data1[1]=rs.getString(3);
+                data1[2]=rs.getString(4);
+                data1[3]=rs.getString(5);
+                data1[4]=rs.getString(6);
+                data1[5]=rs.getString(7);
+                data1[6]=rs.getString(8);
+                data1[7]=rs.getString(9);
 
                 arraybo.add(data1);
             }
@@ -68,6 +70,60 @@ public class JdbcRetrieve {
             e.printStackTrace();
         }
 
+    }
+
+    public void insertIntoDataBase(Object[] obj){
+        try (Connection con= DriverManager.getConnection(url , user, password);
+             PreparedStatement pst = con.prepareStatement(insert);
+             ){
+
+                pst.setDate(1, java.sql.Date.valueOf((String) obj[0]));
+                pst.setString(2, (String) obj[1]);
+                pst.setString(3, (String) obj[2]);
+                pst.setInt(4, Integer.parseInt((String) obj[3]));
+                pst.setDouble(5, Double.parseDouble((String) obj[4]));
+                pst.setDouble(6, Double.parseDouble((String) obj[5]));
+                pst.setDouble(7, Double.parseDouble((String) obj[6]));
+                pst.setDouble(8, Double.parseDouble((String) obj[7]));
+                pst.executeUpdate();
+
+
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteFromDataBase(int i){
+        try (Connection con= DriverManager.getConnection(url , user, password);
+             PreparedStatement pst = con.prepareStatement(delete);
+        ){
+            pst.setInt(1,i);
+            pst.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updateDataBase(Object[] obj , int i){
+        try (Connection con= DriverManager.getConnection(url , user, password);
+             PreparedStatement pst = con.prepareStatement(update);
+        ){
+            pst.setDate(1, java.sql.Date.valueOf((String) obj[0]));
+            pst.setString(2, (String) obj[1]);
+            pst.setString(3, (String) obj[2]);
+            pst.setInt(4, Integer.parseInt((String) obj[3]));
+            pst.setDouble(5, Double.parseDouble((String) obj[4]));
+            pst.setDouble(6, Double.parseDouble((String) obj[5]));
+            pst.setDouble(7, Double.parseDouble((String) obj[6]));
+            pst.setDouble(8, Double.parseDouble((String) obj[7]));
+            pst.setInt(9,i);
+            pst.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public void sendData () throws Exception {
