@@ -1,4 +1,5 @@
 package com.company;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class JdbcRetrieve {
     String query = "SELECT * FROM `product sales`";
     Sender me = new Sender();
     ArrayList<Object[]> arraybo= new ArrayList<Object[]>();
+    ArrayList<String> ids= new ArrayList<String>();
     private ArrayList<JSONObject> toSend = new ArrayList<>();
 
     public JdbcRetrieve(String name){
@@ -26,9 +28,11 @@ public class JdbcRetrieve {
         try (Connection con= DriverManager.getConnection(url , user, password);
             PreparedStatement pst = con.prepareStatement(query);
              ResultSet rs = pst.executeQuery()){
+            ids.add(database);
             while (rs.next()){
                 HashMap<String, String> data = new HashMap<String, String>();
                 data.put("ID", rs.getString(1));
+                ids.add(rs.getString(1));
                 data.put("BranchOffice",this.database);
                 data.put("Date", rs.getString(2));
                 data.put("Region", rs.getString(3));
@@ -54,6 +58,8 @@ public class JdbcRetrieve {
 
                 arraybo.add(data1);
             }
+
+
         }
         catch (SQLException ex){
             Logger lgr= Logger.getLogger(JdbcRetrieve.class.getName());
@@ -65,10 +71,12 @@ public class JdbcRetrieve {
     }
 
     public void sendData () throws Exception {
-        for (JSONObject data:toSend
-             ) {
-            me.send(data);
+        for (JSONObject data:toSend) {
+            me.send(data,true);
         }
+        JSONArray arrayofids = new JSONArray(ids);
+        JSONObject id = new JSONObject();
+        me.send(id.put("ids",arrayofids),false);
     }
 
     public Object[][] getArray(){
