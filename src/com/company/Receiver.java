@@ -32,10 +32,16 @@ public class Receiver {
                 System.out.println("[x] received '" + message );
                 try {
                     if (delivery.getEnvelope().getRoutingKey().equals("Data")) {
-                        me.insertIntoDataBase(new JSONObject(message));
+                        int status = me.insertIntoDataBase(new JSONObject(message));
+                        switch (status){
+                            case 1: HO.addRowToTable(new JSONObject(message));break;
+                            case 2: HO.updateTable(new JSONObject(message));break;
+                            default:
+                        }
                     }
                     else{
-                        me.deleteFromDataBase(new JSONObject(message));}
+                        me.deleteFromDataBase(new JSONObject(message));
+                        HO.deleteFromTable(new JSONObject(message));}
 
                 } catch (Exception e) {
                     e.printStackTrace();

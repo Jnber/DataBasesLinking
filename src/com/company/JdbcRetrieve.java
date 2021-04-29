@@ -18,20 +18,26 @@ public class JdbcRetrieve {
     String delete = "DELETE from `product sales` where ID= (SELECT ID FROM (SELECT * FROM `product sales` LIMIT ?,1) as t)";
     String update = "update `product sales` set Date=? , Region=?, Product=?, Qty=?, Cost=?, Amt=?, Taxe=? , Total=?   WHERE ID=(SELECT ID FROM (SELECT * FROM `product sales` LIMIT ?,1) as t)";
     Sender me = new Sender();
-    ArrayList<Object[]> arraybo= new ArrayList<Object[]>();
-    ArrayList<String> ids= new ArrayList<String>();
-    private ArrayList<JSONObject> toSend = new ArrayList<>();
+    ArrayList<Object[]> arraybo;
+    ArrayList<String> ids;
+    private ArrayList<JSONObject> toSend;
 
     public JdbcRetrieve(String name){
         this.database=name;
         this.url = "jdbc:mysql://localhost:3306/"+database+"?useSSL=false";
+
     }
 
     public void connection() {
         try (Connection con= DriverManager.getConnection(url , user, password);
             PreparedStatement pst = con.prepareStatement(query);
              ResultSet rs = pst.executeQuery()){
+
+            toSend = new ArrayList<>();
+            ids = new ArrayList<String>();
+            arraybo = new ArrayList<Object[]>();
             ids.add(database);
+
             while (rs.next()){
                 HashMap<String, String> data = new HashMap<String, String>();
                 data.put("ID", rs.getString(1));
@@ -127,6 +133,7 @@ public class JdbcRetrieve {
     }
 
     public void sendData () throws Exception {
+        connection();
         for (JSONObject data:toSend) {
             me.send(data,true);
         }

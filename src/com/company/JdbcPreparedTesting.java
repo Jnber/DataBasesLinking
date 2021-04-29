@@ -23,12 +23,11 @@ public class JdbcPreparedTesting {
     String update = "update `product sales` set Date=? , Region=?, Product=?, Qty=?, Cost=?, Amt=?, Taxe=? , Total=?   WHERE ID=? and BranchOffice=?";
     ArrayList<Object[]> arraybo= new ArrayList<Object[]>();
 
-    public void insertIntoDataBase (JSONObject obj) {
+    public int insertIntoDataBase (JSONObject obj) {
         try (Connection con= DriverManager.getConnection(cs , user, password);
              PreparedStatement pst = con.prepareStatement(insert);
              PreparedStatement pst1 = con.prepareStatement(update);
         ){
-            System.out.println("Ready");
             HashMap<String,String> map = new ObjectMapper().readValue(String.valueOf(obj), new TypeReference<HashMap<String,String>>(){});
             if (!exists(Integer.parseInt(map.get("ID")),map.get("BranchOffice"), con)){
                 System.out.println("adding a new row");
@@ -43,6 +42,7 @@ public class JdbcPreparedTesting {
                 pst.setDouble(9, Double.parseDouble(map.get("Taxe")));
                 pst.setDouble(10, Double.parseDouble(map.get("Total")));
                 pst.executeUpdate();
+                return 1;
             }
             else {
                 if (!same(map, con)){
@@ -58,10 +58,9 @@ public class JdbcPreparedTesting {
                     pst1.setInt(9,Integer.parseInt(map.get("ID")));
                     pst1.setString(10,map.get("BranchOffice"));
                     pst1.executeUpdate();
+                    return 2;
                 }
             }
-
-
 
         }
         catch (SQLException  ex){
@@ -74,13 +73,14 @@ public class JdbcPreparedTesting {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return 0;
     }
 
     public void deleteFromDataBase (JSONObject ids) throws IOException {
-        System.out.println("list");
+
         HashMap<String, ArrayList<String>> list= new ObjectMapper().readValue(String.valueOf(ids), new TypeReference<HashMap<String,ArrayList<String>>>(){});
         System.out.println(list);
+        markers ="";
 
         for (int i =1; i<list.get("ids").size(); i++){
             this.markers= this.markers +  "?,";
@@ -88,13 +88,17 @@ public class JdbcPreparedTesting {
         markers= markers.substring(0,markers.length()-1);
         String delete = "DELETE FROM `product sales` WHERE id NOT IN ("+markers+") and BranchOffice=?";
 
+       // System.out.println(delete);
+
         try (Connection con= DriverManager.getConnection(cs , user, password);
              PreparedStatement pst = con.prepareStatement(delete);
         ){
             for (int i =1; i<list.get("ids").size(); i++){
+               // System.out.println(list.get("ids").size());
                 pst.setInt(i,Integer.parseInt(list.get("ids").get(i)));
             }
             pst.setString(list.get("ids").size(),list.get("ids").get(0));
+
             pst.executeUpdate();
         }
         catch (SQLException e){
