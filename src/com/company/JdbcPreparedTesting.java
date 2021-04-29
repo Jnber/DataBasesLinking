@@ -80,6 +80,7 @@ public class JdbcPreparedTesting {
 
         HashMap<String, ArrayList<String>> list= new ObjectMapper().readValue(String.valueOf(ids), new TypeReference<HashMap<String,ArrayList<String>>>(){});
         System.out.println(list);
+        markers ="";
 
         for (int i =1; i<list.get("ids").size(); i++){
             this.markers= this.markers +  "?,";
@@ -87,13 +88,17 @@ public class JdbcPreparedTesting {
         markers= markers.substring(0,markers.length()-1);
         String delete = "DELETE FROM `product sales` WHERE id NOT IN ("+markers+") and BranchOffice=?";
 
+       // System.out.println(delete);
+
         try (Connection con= DriverManager.getConnection(cs , user, password);
              PreparedStatement pst = con.prepareStatement(delete);
         ){
             for (int i =1; i<list.get("ids").size(); i++){
+               // System.out.println(list.get("ids").size());
                 pst.setInt(i,Integer.parseInt(list.get("ids").get(i)));
             }
             pst.setString(list.get("ids").size(),list.get("ids").get(0));
+
             pst.executeUpdate();
         }
         catch (SQLException e){

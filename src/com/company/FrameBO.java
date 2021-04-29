@@ -21,13 +21,13 @@ public class FrameBO extends JFrame implements ActionListener {
     private DefaultTableModel model;
 
 
-    public FrameBO (JdbcRetrieve b) throws Exception {
+    public FrameBO (JdbcRetrieve b, int nb) throws Exception {
 
         this.BO= b;
         this.data= b.getArray();
 
         this.setBounds(100,100,900,437);
-        this.setTitle("Sender");
+        this.setTitle("BO"+nb);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(null);
 
@@ -120,23 +120,6 @@ public class FrameBO extends JFrame implements ActionListener {
         panel.add(synchronize);
 
 
-
-        //this.button= new JButton();
-        //this.table= new JTable(data, titles);
-        //this.button.setText("Synchronize");
-        //this.button.setBackground(Color.DARK_GRAY);
-        //this.button.setForeground(Color.lightGray);
-        //this.button.setVisible(true);
-        //this.button.addActionListener(this);
-
-        //this.panelButt = new JPanel();
-        //panelButt.setLayout(new GridLayout(1, 3,200,10));
-        //panelButt.add(button);
-
-
-        //this.getContentPane().add(table.getTableHeader(),BorderLayout.NORTH);
-        //this.getContentPane().add(table);
-        //this.add(panelButt, BorderLayout.SOUTH);
         this.setVisible(true);
     }
 

@@ -55,10 +55,7 @@ public class FrameHo extends JFrame implements ActionListener{
 
         table.setModel(model);
         scrollpane.setViewportView(table);
-//        button= new JButton("Add");
-//        button.setBounds(200,360,90,23);
-//        button.addActionListener(this);
-//        panel.add(button);
+
         this.setVisible(true);
     }
 
@@ -91,6 +88,7 @@ public class FrameHo extends JFrame implements ActionListener{
         }
         System.out.println("deleeting");
         for (int i = 0; i<model.getRowCount(); i++){
+            System.out.println("rooww number"+i);
             if(model.getValueAt(i,1).equals(database) && notIn((String) model.getValueAt(i,0), ids)){
                 model.removeRow(i);
             }
