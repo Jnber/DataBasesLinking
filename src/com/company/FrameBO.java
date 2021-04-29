@@ -116,6 +116,7 @@ public class FrameBO extends JFrame implements ActionListener {
 
         synchronize= new JButton("Synch");
         synchronize.setBounds(133,324,90,23);
+        synchronize.addActionListener(this);
         panel.add(synchronize);
 
 
@@ -143,6 +144,7 @@ public class FrameBO extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==synchronize) {
+            System.out.println("synchronizing");
             try {
                 BO.sendData();
             } catch (Exception exception) {

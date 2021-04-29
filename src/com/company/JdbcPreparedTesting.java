@@ -23,12 +23,11 @@ public class JdbcPreparedTesting {
     String update = "update `product sales` set Date=? , Region=?, Product=?, Qty=?, Cost=?, Amt=?, Taxe=? , Total=?   WHERE ID=? and BranchOffice=?";
     ArrayList<Object[]> arraybo= new ArrayList<Object[]>();
 
-    public void insertIntoDataBase (JSONObject obj) {
+    public int insertIntoDataBase (JSONObject obj) {
         try (Connection con= DriverManager.getConnection(cs , user, password);
              PreparedStatement pst = con.prepareStatement(insert);
              PreparedStatement pst1 = con.prepareStatement(update);
         ){
-            System.out.println("Ready");
             HashMap<String,String> map = new ObjectMapper().readValue(String.valueOf(obj), new TypeReference<HashMap<String,String>>(){});
             if (!exists(Integer.parseInt(map.get("ID")),map.get("BranchOffice"), con)){
                 System.out.println("adding a new row");
@@ -43,6 +42,7 @@ public class JdbcPreparedTesting {
                 pst.setDouble(9, Double.parseDouble(map.get("Taxe")));
                 pst.setDouble(10, Double.parseDouble(map.get("Total")));
                 pst.executeUpdate();
+                return 1;
             }
             else {
                 if (!same(map, con)){
@@ -58,10 +58,9 @@ public class JdbcPreparedTesting {
                     pst1.setInt(9,Integer.parseInt(map.get("ID")));
                     pst1.setString(10,map.get("BranchOffice"));
                     pst1.executeUpdate();
+                    return 2;
                 }
             }
-
-
 
         }
         catch (SQLException  ex){
@@ -74,11 +73,11 @@ public class JdbcPreparedTesting {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return 0;
     }
 
     public void deleteFromDataBase (JSONObject ids) throws IOException {
-        System.out.println("list");
+
         HashMap<String, ArrayList<String>> list= new ObjectMapper().readValue(String.valueOf(ids), new TypeReference<HashMap<String,ArrayList<String>>>(){});
         System.out.println(list);
 
